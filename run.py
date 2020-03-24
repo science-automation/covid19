@@ -39,11 +39,12 @@ for region in regions:
     os.system("gzip *")
     # use real addresses
     os.chdir(basedir + '/s/fi_addresses')
-    os.system("ls -al")
     os.chdir(basedir + '/s/ETL-Synthea-Python/python_etl')
     os.system("python real_address_synthea.py")
     # save the synthea data that will be used for omop conversion
     os.chdir(basedir + '/s/synthea/output/csv')
+    os.system("ls -la")
+    print("zip " + basedir + "/s/ETL-Synthea-Python/" + country + "_covid19_synthea.zip *.csv*")
     os.system("zip " + basedir + "/s/ETL-Synthea-Python/" + country + "_covid19_synthea.zip *.csv*")
     # run synthea->omop
     os.chdir(basedir + '/s/ETL-Synthea-Python/python_etl')
