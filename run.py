@@ -44,7 +44,6 @@ for region in regions:
     # save the synthea data that will be used for omop conversion
     os.chdir(basedir + '/s/synthea/output/csv')
     os.system("ls -la")
-    print("zip " + basedir + "/s/ETL-Synthea-Python/" + country + "_covid19_synthea.zip *.csv*")
     os.system("zip " + basedir + "/s/ETL-Synthea-Python/" + country + "_covid19_synthea.zip *.csv*")
     # run synthea->omop
     os.chdir(basedir + '/s/ETL-Synthea-Python/python_etl')

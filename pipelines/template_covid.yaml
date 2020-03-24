@@ -90,7 +90,7 @@ jobs:
         mkdir -p ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
         cd ${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python
         cp *_omop_* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
-        cp *_synthea_* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
+        cp *_synthea* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
         cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage
         git lfs track *.zip
         git add .
