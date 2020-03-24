@@ -1,5 +1,4 @@
-# Synthetic Finland #
+# Covid19 Finland #
 
-Datalake simulation for the country of Finland
-
+EHR Simulation of covid outbreak in country of Finland
 
