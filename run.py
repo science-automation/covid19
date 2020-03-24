@@ -33,7 +33,7 @@ for region in regions:
             for f in filesToRemove:
                 os.remove(os.path.join('output/fhir', f))
     # run synthea
-    os.system("./run_synthea -p 100 -m covid19 Uusimaa")
+    os.system("./run_synthea -p 100000 -m covid19 Uusimaa")
     # compress synthea output
     os.chdir(basedir + '/s/synthea/output/csv')
     os.system("zip " + basedir + "/s/ETL-Synthea-Python/" + country + "_covid19_synthea.zip *.csv")
