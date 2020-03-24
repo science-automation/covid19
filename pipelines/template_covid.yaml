@@ -87,8 +87,10 @@ jobs:
         git config --global user.name "scivm"
         git config http.version HTTP/1.1
         mkdir -p ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
+        mkdir -p ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
         cd ${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python
-        cp *.zip ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
+        cp *_omop_* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
+        cp *_synthea_* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
         cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage
         git lfs track *.zip
         git add .

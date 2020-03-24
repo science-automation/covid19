@@ -36,6 +36,7 @@ for region in regions:
     os.system("./run_synthea -p 100 -m covid19 Uusimaa")
     # compress synthea output
     os.chdir(basedir + '/s/synthea/output/csv')
+    os.system("zip " + basedir + "/s/ETL-Synthea-Python/" + country + "_covid19_synthea.zip *.csv")
     os.system("gzip *")
     # use real addresses
     os.chdir(basedir + '/s/fi_addresses')
@@ -47,5 +48,4 @@ for region in regions:
     os.system("python synthea_omop.py")
     os.chdir(basedir + '/s/ETL-Synthea-Python/output')
     os.system("zip ../" + country + "_covid19_omop_6.zip *.csv")
-    #file.write(module + ": " + synthea_fhir + synthea_csv + omop_cdm531 + omop_cdm6 + "\n\n")
 file.close()
