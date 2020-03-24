@@ -1,0 +1,96 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+resources:
+  repositories:
+    - repository: synthea
+      type: github
+      endpoint: science-automation
+      name: synthetichealth/synthea
+    - repository: synthea-international
+      type: github
+      endpoint: science-automation
+      name: synthetichealth/synthea-international
+    - repository: SyntheticFinland
+      type: github
+      endpoint: science-automation
+      name: science-automation/SyntheticFinland
+    - repository: ETL-Synthea-Python
+      type: github
+      endpoint: science-automation
+      name: science-automation/ETL-Synthea-Python
+    - repository: SyntheticFinlandStorage
+      type: git
+      name: SyntheticFinland/SyntheticFinlandStorage
+      lfs: true
+    - repository: fi_addresses
+      type: git
+      name: SyntheticFinland/fi_addresses
+      lfs: true
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+ 
+jobs:
+  - job: omop_generator
+    timeoutInMinutes: 0
+    steps:
+    - checkout: self
+      persistCredentials: true
+    - checkout: synthea
+      fetchDepth: 1
+      clean: true
+    - checkout: synthea-international
+      fetchDepth: 1
+      clean: true
+    - checkout: ETL-Synthea-Python
+      fetchDepth: 1
+      clean: true
+    - checkout: SyntheticFinlandStorage
+      persistCredentials: true
+    - checkout: fi_addresses
+      lfs: true
+    - script: |
+        pip install pandas
+        pip install python-dotenv
+      displayName: 'Install python modules needed'
+    - script: |
+        cd ${AGENT_BUILDDIRECTORY}/s/synthea
+        # temp file some values in synthea.properties
+        echo "exporter.encoding = UTF-8" >> ../synthea-international/fi/src/main/resources/synthea.properties
+        cp -R ../synthea-international/fi/* .
+        ./gradlew build -x test
+      displayName: 'Build Synthea for country'
+    - script: |
+        cd ${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python/python_etl
+        echo "BASE_SYNTHEA_INPUT_DIRECTORY=${AGENT_BUILDDIRECTORY}/s/synthea/output/csv" > .env
+        echo "BASE_OMOP_INPUT_DIRECTORY=${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python/vocab/" >> .env
+        echo "BASE_OUTPUT_DIRECTORY=${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python/output" >> .env
+        echo "ADDRESS_FILE=${AGENT_BUILDDIRECTORY}/s/fi_addresses/fi.csv.gz" >> .env
+        echo "CDM_VERSION=6" >> .env
+        echo "INPUT_CHUNK_SIZE=100000" >> .env
+        echo "COUNTER_FILE=.counter" >> .env
+      displayName: 'Prepare Synthea to OMOP for country'
+    - script: |
+        cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinland
+        python ./run.py ${AGENT_BUILDDIRECTORY} $COUNTRY
+      displayName: 'Run Synthea, Synthea->OMOP 6 for country'
+    - script: |
+        cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/
+        git config --global user.name "scivm"
+        git config http.version HTTP/1.1
+        mkdir -p ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
+        cd ${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python
+        cp *.zip ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
+        cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage
+        git lfs track *.zip
+        git add .
+        git commit -m "generated from automation [skip ci]"
+        git show-ref
+        git push origin HEAD:master
+      displayName: "Check files into git storage"
