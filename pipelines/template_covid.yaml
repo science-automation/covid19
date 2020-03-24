@@ -61,6 +61,8 @@ jobs:
       displayName: 'Install python modules needed'
     - script: |
         cd ${AGENT_BUILDDIRECTORY}/s/synthea
+        # checkout the covid19 branch
+        git checkout covid19
         # temp file some values in synthea.properties
         echo "exporter.encoding = UTF-8" >> ../synthea-international/fi/src/main/resources/synthea.properties
         cp -R ../synthea-international/fi/* .
