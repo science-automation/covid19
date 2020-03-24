@@ -37,7 +37,7 @@ pool:
   vmImage: 'ubuntu-latest'
  
 jobs:
-  - job: omop_generator
+  - job: covid_generator
     timeoutInMinutes: 0
     steps:
     - checkout: self
