@@ -47,6 +47,7 @@ jobs:
         # checkout the covid19 branch
         git checkout covid19
         # temp file some values in synthea.properties
+        sed -i 's/exporter.csv.export = false/exporter.csv.export = true/g' ${AGENT_BUILDDIRECTORY}/s/synthea/src/main/resources/synthea.properties
         ./gradlew build -x test
       displayName: 'Build Synthea for country'
     - script: |
