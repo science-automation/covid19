@@ -43,4 +43,3 @@ for region in regions:
     os.system("python synthea_omop.py")
     os.chdir(basedir + '/s/ETL-Synthea-Python/output')
     os.system("zip ../" + state + "_covid19_omop_6.zip *.csv")
-file.close()
