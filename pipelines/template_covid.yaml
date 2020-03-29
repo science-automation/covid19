@@ -15,7 +15,7 @@ resources:
       name: science-automation/ETL-Synthea-Python
     - repository: covid19Storage
       type: git
-      name: covid19/covid19Storage
+      name: Covid19/covid19Storage
       lfs: true
 
 trigger:
@@ -61,7 +61,7 @@ jobs:
       displayName: 'Prepare Synthea to OMOP for country'
     - script: |
         cd ${AGENT_BUILDDIRECTORY}/s/covid19
-        python ./run.py ${AGENT_BUILDDIRECTORY} $COUNTRY
+        python ./run.py ${AGENT_BUILDDIRECTORY} $STATE
       displayName: 'Run Synthea, Synthea->OMOP 6 for country'
     - script: |
         cd ${AGENT_BUILDDIRECTORY}/s/covid19Storage
