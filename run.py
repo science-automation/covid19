@@ -33,14 +33,10 @@ for region in regions:
             for f in filesToRemove:
                 os.remove(os.path.join('output/fhir', f))
     # run synthea
-    os.system("./run_synthea -p 10000 Uusimaa")
+    os.system("./run_synthea -p 10000")
     # compress synthea output
     os.chdir(basedir + '/s/synthea/output/csv')
     os.system("gzip *")
-    # use real addresses
-    os.chdir(basedir + '/s/fi_addresses')
-    os.chdir(basedir + '/s/ETL-Synthea-Python/python_etl')
-    os.system("python real_address_synthea.py")
     # save the synthea data that will be used for omop conversion
     os.chdir(basedir + '/s/synthea/output/csv')
     os.system("ls -la")
