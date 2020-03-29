@@ -9,25 +9,13 @@ resources:
       type: github
       endpoint: science-automation
       name: synthetichealth/synthea
-    - repository: synthea-international
-      type: github
-      endpoint: science-automation
-      name: synthetichealth/synthea-international
-    - repository: SyntheticFinland
-      type: github
-      endpoint: science-automation
-      name: science-automation/SyntheticFinland
     - repository: ETL-Synthea-Python
       type: github
       endpoint: science-automation
       name: science-automation/ETL-Synthea-Python
-    - repository: SyntheticFinlandStorage
+    - repository: covid19Storage
       type: git
-      name: SyntheticFinland/SyntheticFinlandStorage
-      lfs: true
-    - repository: fi_addresses
-      type: git
-      name: SyntheticFinland/fi_addresses
+      name: covid19/covid19Storage
       lfs: true
 
 trigger:
@@ -45,16 +33,11 @@ jobs:
     - checkout: synthea
       fetchDepth: 1
       clean: true
-    - checkout: synthea-international
-      fetchDepth: 1
-      clean: true
     - checkout: ETL-Synthea-Python
       fetchDepth: 1
       clean: true
-    - checkout: SyntheticFinlandStorage
+    - checkout: covid19Storage
       persistCredentials: true
-    - checkout: fi_addresses
-      lfs: true
     - script: |
         pip install pandas
         pip install python-dotenv
@@ -64,8 +47,6 @@ jobs:
         # checkout the covid19 branch
         git checkout covid19
         # temp file some values in synthea.properties
-        echo "exporter.encoding = UTF-8" >> ../synthea-international/fi/src/main/resources/synthea.properties
-        cp -R ../synthea-international/fi/* .
         ./gradlew build -x test
       displayName: 'Build Synthea for country'
     - script: |
@@ -83,15 +64,15 @@ jobs:
         python ./run.py ${AGENT_BUILDDIRECTORY} $COUNTRY
       displayName: 'Run Synthea, Synthea->OMOP 6 for country'
     - script: |
-        cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/
+        cd ${AGENT_BUILDDIRECTORY}/s/covid19Storage
         git config --global user.name "scivm"
         git config http.version HTTP/1.1
-        mkdir -p ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
-        mkdir -p ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
+        mkdir -p ${AGENT_BUILDDIRECTORY}/s/covid19Storage/omop
+        mkdir -p ${AGENT_BUILDDIRECTORY}/s/covid19Storage/synthea
         cd ${AGENT_BUILDDIRECTORY}/s/ETL-Synthea-Python
-        cp *_omop_* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/omop
-        cp *_synthea* ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage/synthea
-        cd ${AGENT_BUILDDIRECTORY}/s/SyntheticFinlandStorage
+        cp *_omop_* ${AGENT_BUILDDIRECTORY}/s/covid19Storage/omop
+        cp *_synthea* ${AGENT_BUILDDIRECTORY}/s/covid19Storage/synthea
+        cd ${AGENT_BUILDDIRECTORY}/s/covid19Storage
         git lfs track *.zip
         git add .
         git commit -m "generated from automation [skip ci]"
